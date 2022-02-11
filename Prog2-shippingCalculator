@@ -1,0 +1,123 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+//R2724
+//Prog 2
+//10/1
+//To figure out the best rate
+
+namespace Project2
+{
+    public partial class ShippingCalculator : Form
+    {
+        public ShippingCalculator()
+        {
+            InitializeComponent();
+        }
+
+        private void calccost_Click(object sender, EventArgs e)
+        {
+            const int DELC = 20; //Delivery C
+            const double IBC = .25; //Pounds C
+            const double MILEB = .10;//Miles B
+            const double MILEA = .02; //Miles A
+            const int WEIGHTA = 1;//Weight A
+            double WEIGHT, MILES, RATEA, WEIGHTB, RATEB, RATEC; //Rates and inputs
+            int DAYS, Price_perA, Price_perb, MILEC; //Prices and Miles C
+
+
+            if (double.TryParse(weighttxt.Text, out WEIGHT) && WEIGHT > 0) { //Tryparses to check all of the inputs
+                if (double.TryParse(milestxt.Text, out MILES) && MILES > 0) 
+                {
+                    if (int.TryParse(daystxt.Text, out DAYS) && DAYS > 0)
+                    {
+                        //Start of Company A
+                        switch (DAYS) //switch to determine the price of A
+                        {
+                            case 1:
+                                Price_perA = 20;
+                                break;
+                            case 2:
+                                Price_perA = 17;
+                                break;
+                            case 3:
+                                Price_perA = 15;
+                                break;
+                            case 4:
+                                Price_perA = 10;
+                                break;
+                            case 5:
+                                Price_perA = 10;
+                                break;
+                            case 6:
+                                Price_perA = 10;
+                                break;
+                            default:
+                                Price_perA = 7;
+                                break;
+                        }
+
+                        RATEA = (WEIGHTA * WEIGHT) + (MILEA * MILES) + Price_perA; //Rate A result
+                        CompAcost.Text = $"{RATEA:C2}"; //posted to Rate A
+
+                        //Start Company B
+                        if (WEIGHT < 10) //if-else to determine B
+                            WEIGHTB = 3;
+                        else if (WEIGHT < 50)
+                            WEIGHTB = 5;
+                        else if (WEIGHT < 100)
+                            WEIGHTB = 10;
+                        else if (WEIGHT < 200)
+                            WEIGHTB = 20;
+                        else
+                            WEIGHTB = WEIGHT * .15;
+                        if (DAYS > 4)
+                            Price_perb = 10;
+                        else
+                            Price_perb = 7;
+
+                        RATEB = ((MILEB * MILES) + WEIGHTB) + Price_perb; //Rate B formula
+                        CompBcost.Text = $"{RATEB:C2}"; //Posted to B
+
+                        //Start Company C
+                        if (MILES >= 1000) //if else to determine C 
+                            MILEC = 40;
+                        else if (MILES >= 750)
+                            MILEC = 35;
+                        else if (MILES >= 500)
+                            MILEC = 25;
+                        else if (MILES >= 200)
+                            MILEC = 15;
+                        else
+                            MILEC = 10;
+
+                        RATEC = (WEIGHT * IBC) + MILEC + DELC; //formula for C
+                        CompCcost.Text = $"{RATEC:C2}"; //post to C
+
+                        //Start of formula 
+                        if (RATEA < RATEB && RATEA < RATEC) //if else to determine the best Value
+                            bestcomp.Text = "Company A has the best value";
+                        else if (RATEB < RATEA && RATEB < RATEC)
+                            bestcomp.Text = "Company B has the best value";
+                        else
+                            bestcomp.Text = "Company C has the best value";
+
+                    }
+                    else
+                        bestcomp.Text = "Invalid Delivery Days";
+                }
+                else
+                    bestcomp.Text = "Invalid Miles";
+            }
+            else
+                bestcomp.Text = "Invaid Package Weight"; 
+            
+        }
+    }
+}
