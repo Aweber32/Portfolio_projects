@@ -1,0 +1,96 @@
+using System;
+using System.CodeDom;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+//R2724 
+//prog3
+//11/4
+//01
+
+namespace Prog3
+{
+    public partial class Salescalc : Form
+    {
+        public Salescalc()
+        {
+            InitializeComponent();
+        }
+
+        private void calcbutton_Click(object sender, EventArgs e)
+        {
+            const int ITEMONE = 4; //const discount
+            const int ITEMTWO = 5; //const discount
+            const int ITEMTHREE = 10; //const discount
+            const int ITEMFOUR = 20; //const discount 
+            int quantityIN, productIN;
+            double taxIN, costIN, discIN, outputans, discountans, taxans, totalans; //other vars for math
+            string[] state = { "KY", "OH", "IN", "IL" }; //states
+            double[] tax = { .06, .0717, .07, .0874 }; //tax
+            int[] product = { 1001, 1002, 1003, 1004, 1005, 1006, 1007 }; //product
+            double[] cost = { 7.87, 9.51, 10.73, 9.99, 11.99, 5.00, 4.58 }; //cost
+            double[] discount = { .0, .05, .10, .15 }; //discount
+
+            if (int.TryParse(producttxt.Text, out productIN)) //tryparse
+            {
+                if (int.TryParse(quantitytxt.Text, out quantityIN)) //tryparse
+                {
+                    costIN = 0; //initial values
+                    taxIN = 0;
+
+                    if (statetxt.SelectedIndex >= 0)
+                    {
+
+                        for (int x = 0; x < state.Length; x++) //calc tax
+                        {
+                            if (statetxt.Text == state[x])
+                            {
+                                taxIN = tax[x];
+                            }
+                        }
+                        for (int a = 0; a < product.Length; a++) //calc cost
+                        {
+                            if (productIN == product[a])
+                            {
+                                costIN = cost[a];
+                            }
+                            else
+                                producttxt.Text = "Error"; //error for if product dosent exist
+                        }
+                        if (quantityIN <= ITEMONE) //calc discount
+                            discIN = discount[0];
+                        else if (quantityIN >= ITEMTWO && quantityIN < ITEMTHREE)
+                            discIN = discount[1];
+                        else if (quantityIN >= ITEMTHREE && quantityIN < ITEMFOUR)
+                            discIN = discount[2];
+                        else
+                            discIN = discount[3];
+
+                        outputans = quantityIN * costIN; //output formula
+                        costoutput.Text = $"{outputans:C2}";
+                        discountans = outputans - (outputans * discIN); //discount formula
+                        discountoutput.Text = $"{discountans:C2}";
+                        taxans = taxIN * discountans; //tax formula
+                        taxoutput.Text = $"{taxans:C2}";
+                        totalans = discountans + taxans; //total formula
+                        totaloutput.Text = $"{totalans:C2}";
+                    }
+                    else
+                        statetxt.Text = "Error"; //Parse error
+                    
+                }
+                else
+                    quantitytxt.Text = "Error"; //parse error
+            }
+            else
+                producttxt.Text = "Error"; //parse error 
+        }   
+                
+    }
+}
